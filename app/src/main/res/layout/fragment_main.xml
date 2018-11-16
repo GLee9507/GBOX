@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="viewModel" type="com.glee.gbox.main.MainViewModel"/>
+    </data>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    app:title="首页"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </com.google.android.material.appbar.AppBarLayout>
+        <androidx.recyclerview.widget.RecyclerView
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_width="match_parent"
+                android:id="@+id/recycler"
+                app:binder="@{viewModel.recyclerViewBinder}"
+                app:data="@{viewModel.recyclerViewBinder.listData}"
+                android:layout_height="match_parent"/>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

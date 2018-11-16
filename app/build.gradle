@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.glee.gbox"
+        minSdkVersion 14
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+    buildToolsVersion = '28.0.3'
+}
+
+dependencies {
+    def dep = rootProject.ext.deps
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation dep.kotlin
+    implementation dep.appcompat
+    implementation dep.ktx
+    implementation dep.constraintlayout
+    implementation dep.drawerlayout
+    implementation dep.cardview
+    implementation dep.design
+    implementation dep.recyclerview
+    implementation dep.viewpager
+    implementation dep.swiperefreshlayout
+    implementation dep.lifecycle
+    implementation dep.lifecycle_common
+    implementation dep.autosize
+    implementation dep.retrofit
+    implementation dep.retrofit_gson
+    implementation dep.paging
+    implementation dep.fresco
+    kapt dep.databinding
+//    implementation dep.media2_exoplayer
+}
