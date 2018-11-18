@@ -1,25 +1,39 @@
 package com.glee.gbox.bean
 
-data class DatasItem(val superChapterName: String = "",
-                     val publishTime: Long = 0,
-                     val visible: Int = 0,
-                     val niceDate: String = "",
-                     val projectLink: String = "",
-                     val author: String = "",
-                     val zan: Int = 0,
-                     val origin: String = "",
-                     val chapterName: String = "",
-                     val link: String = "",
-                     val title: String = "",
-                     val type: Int = 0,
-                     val userId: Int = 0,
-                     val tags: List<TagsItem>?,
-                     val apkLink: String = "",
-                     val envelopePic: String = "",
-                     val chapterId: Int = 0,
-                     val superChapterId: Int = 0,
-                     val id: Int = 0,
-                     val fresh: Boolean = false,
-                     val collect: Boolean = false,
-                     val courseId: Int = 0,
-                     val desc: String = "")
+import com.glee.gbox.recyclerview.AreContentsTheSame
+import com.glee.gbox.recyclerview.AreItemsTheSame
+
+data class DatasItem(
+    val superChapterName: String = "",
+    val publishTime: Long = 0,
+    val visible: Int = 0,
+    val niceDate: String = "",
+    val projectLink: String = "",
+    val author: String = "",
+    val zan: Int = 0,
+    val origin: String = "",
+    val chapterName: String = "",
+    val link: String = "",
+    val title: String = "",
+    val type: Int = 0,
+    val userId: Int = 0,
+    val tags: List<TagsItem>?,
+    val apkLink: String = "",
+    val envelopePic: String = "",
+    val chapterId: Int = 0,
+    val superChapterId: Int = 0,
+    val id: Int = 0,
+    val fresh: Boolean = false,
+    val collect: Boolean = false,
+    val courseId: Int = 0,
+    val desc: String = ""
+) {
+    companion object {
+        val areItemsTheSame: AreItemsTheSame<DatasItem> = { oldItem, newItem ->
+            oldItem.id == newItem.id
+        }
+        val areContentsTheSame: AreContentsTheSame<DatasItem> = { oldItem, newItem ->
+            oldItem.id == newItem.id
+        }
+    }
+}

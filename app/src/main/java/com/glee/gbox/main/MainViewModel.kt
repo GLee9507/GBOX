@@ -1,16 +1,19 @@
 package com.glee.gbox.main
 
-import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.DiffUtil
+import android.os.Looper
+import android.provider.Contacts
+import android.util.Log
 import com.glee.gbox.BR
-import com.glee.gbox.R
 import com.glee.gbox.BaseViewModel
+import com.glee.gbox.R
 import com.glee.gbox.bean.DatasItem
-import com.glee.gbox.recyclerview.RecyclerViewBinder
 import com.glee.gbox.recyclerview.pagedConfig
 import com.glee.gbox.recyclerview.recyclerViewBinder
 import com.glee.gbox.util.net.NET
-import com.glee.gbox.util.net.enqueue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.Continuation
 
 /**
  *  @author liji
@@ -20,6 +23,10 @@ import com.glee.gbox.util.net.enqueue
 
 
 class MainViewModel : BaseViewModel() {
+    companion object {
+        const val TAG = "MainViewModel"
+    }
+
     val recyclerViewBinder =
         recyclerViewBinder<DatasItem> {
             layoutResId = R.layout.recycler_item_main
@@ -30,24 +37,30 @@ class MainViewModel : BaseViewModel() {
                 pageSize = 20
             }
             loadInitial = { _, callback ->
-                NET.articleList(0).enqueue({
-                    callback.onResult(it.data.datas!!, -1, 1)
-                }, {
-
-                })
+                //                Log.d(TAG, Thread.currentThread().name)
+//                NET.articleList(0).enqueue({
+//                    callback.onResult(it.data.datas!!, -1, 1)
+//                }, {
+//
+//                })
+                val launch = GlobalScope.launch {
+                    val responseBody = NET.articleList(0)
+                        .await()
+                    callback.onResult(responseBody.data.datas!!, -1, 1)
+                }
             }
             loadAfter = { params, callback ->
-                NET.articleList(params.key).enqueue({
-                    callback.onResult(it.data.datas!!, params.key + 1)
-                }, {
-
-                })
+                val launch = GlobalScope.launch {
+                    val responseBody = NET.articleList(params.key)
+                        .await()
+                    callback.onResult(responseBody.data.datas!!, params.key + 1)
+                }
             }
             areItemsTheSame = { oldItem, newItem ->
-                oldItem.id==newItem.id
+                oldItem.id == newItem.id
             }
             areContentsTheSame = { oldItem, newItem ->
-                oldItem.id==newItem.id
+                oldItem.id == newItem.id
             }
         }
 

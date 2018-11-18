@@ -2,7 +2,7 @@ package com.glee.gbox.util.net
 
 import com.glee.gbox.bean.ArticleData
 import com.glee.gbox.bean.ResponseBody
-import retrofit2.Call
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -15,5 +15,5 @@ import retrofit2.http.Path
 
 interface Api {
     @GET("/article/list/{pageNum}/json")
-    fun articleList(@Path("pageNum") pageNum: Int): Call<ResponseBody<ArticleData>>
+    fun articleList(@Path("pageNum") pageNum: Int): Deferred<ResponseBody<ArticleData>>
 }

@@ -40,7 +40,7 @@ dependencies {
     def dep = rootProject.ext.deps
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation dep.kotlin
-    implementation dep.appcompat
+//    implementation dep.appcompat
     implementation dep.ktx
     implementation dep.constraintlayout
     implementation dep.drawerlayout
@@ -56,6 +56,10 @@ dependencies {
     implementation dep.retrofit_gson
     implementation dep.paging
     implementation dep.fresco
+    implementation dep.fragment
+    implementation dep.annotation
+    implementation dep.kotlin_coroutines_adapter
+    implementation dep.kotlin_coroutines
     kapt dep.databinding
 //    implementation dep.media2_exoplayer
 }

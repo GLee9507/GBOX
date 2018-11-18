@@ -1,6 +1,7 @@
 package com.glee.gbox.util.net
 
 import com.glee.gbox.util.AsyncMainExecutor
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.internal.Util
@@ -20,11 +21,12 @@ import java.util.concurrent.TimeUnit
  */
 
 
-val NET by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+val NET: Api by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
     Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl("http://www.wanandroid.com")
         .callbackExecutor(AsyncMainExecutor.create())
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .client(
             OkHttpClient.Builder()
                 .dispatcher(Dispatcher(IOEXECUTORSERVICE))
