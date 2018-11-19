@@ -10,8 +10,10 @@ import com.glee.gbox.bean.DatasItem
 import com.glee.gbox.recyclerview.pagedConfig
 import com.glee.gbox.recyclerview.recyclerViewBinder
 import com.glee.gbox.util.net.NET
+import com.glee.gbox.util.net.enqueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlin.coroutines.Continuation
 
@@ -37,24 +39,22 @@ class MainViewModel : BaseViewModel() {
                 pageSize = 20
             }
             loadInitial = { _, callback ->
-                //                Log.d(TAG, Thread.currentThread().name)
-//                NET.articleList(0).enqueue({
-//                    callback.onResult(it.data.datas!!, -1, 1)
-//                }, {
-//
-//                })
-                val launch = GlobalScope.launch {
-                    val responseBody = NET.articleList(0)
-                        .await()
-                    callback.onResult(responseBody.data.datas!!, -1, 1)
-                }
+                NET.articleList(0)
+                    .enqueue {
+                        onResponse {
+                        }
+                        onFailure {
+                        }
+                    }
             }
             loadAfter = { params, callback ->
-                val launch = GlobalScope.launch {
-                    val responseBody = NET.articleList(params.key)
-                        .await()
-                    callback.onResult(responseBody.data.datas!!, params.key + 1)
-                }
+                NET.articleList(params.key)
+                    .enqueue {
+                        onResponse {
+                        }
+                        onFailure {
+                        }
+                    }
             }
             areItemsTheSame = { oldItem, newItem ->
                 oldItem.id == newItem.id

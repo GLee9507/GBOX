@@ -1,5 +1,7 @@
 package com.glee.gbox.util.net
 
+import android.view.View
+import android.view.ViewGroup
 import com.glee.gbox.util.AsyncMainExecutor
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Dispatcher
@@ -41,18 +43,34 @@ val IOEXECUTORSERVICE by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         SynchronousQueue(), Util.threadFactory("G-BOX ThreadPool", false)
     )
 }
+typealias OnResponse<T> = (response: T) -> Unit
+typealias OnFailure = (t: Throwable) -> Unit
 
-fun <T> Call<T>.enqueue(success: (T) -> Unit, error: (Throwable) -> Unit) {
+
+inline fun <T> Call<T>.enqueue(block: CallBackWrapper<T>.() -> Unit) {
+    val backWrapper = CallBackWrapper<T>().apply(block)
     enqueue(object : Callback<T> {
         override fun onFailure(call: Call<T>, t: Throwable) {
-            error.invoke(t)
+            backWrapper.onFailure!!.invoke(t)
         }
 
         override fun onResponse(call: Call<T>, response: Response<T>) {
-            val body = response.body()
-            if (body == null) onFailure(call, Throwable("null"))
-            else success.invoke(body)
+            val body = response.body()!!
+            backWrapper.onResponse!!.invoke(body)
         }
     })
 }
 
+
+class CallBackWrapper<T> {
+    var onResponse: OnResponse<T>? = null
+    var onFailure: OnFailure? = null
+
+    fun onResponse(block: OnResponse<T>) {
+        onResponse = block
+    }
+
+    fun onFailure(block: OnFailure) {
+        onFailure = block
+    }
+}
