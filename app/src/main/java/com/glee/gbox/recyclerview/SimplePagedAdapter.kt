@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +19,7 @@ import com.glee.gbox.util.AsyncMainExecutor
  */
 
 
-class SimaplePagedAdapter<T>
+class SimplePagedAdapter<T>
 @SuppressLint("RestrictedApi")
 constructor(private val binder: RecyclerViewBinder<T>) : PagedListAdapter<T, LiveHolder>
     (
@@ -37,6 +38,9 @@ constructor(private val binder: RecyclerViewBinder<T>) : PagedListAdapter<T, Liv
         return LiveHolder(DataBindingUtil.inflate(inflater, binder.layoutResId, parent, false))
     }
 
+    override fun submitList(pagedList: PagedList<T>?, commitCallback: Runnable?) {
+        super.submitList(pagedList, commitCallback)
+    }
     override fun onBindViewHolder(holder: LiveHolder, position: Int) {
         val binding = holder.binding
         binding.setVariable(binder.variableId, getItem(position))

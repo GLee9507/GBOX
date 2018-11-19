@@ -57,6 +57,6 @@ private constructor() : Handler.Callback, Executor {
 
     companion object {
         private const val RUN = 100
-        public fun create() = AsyncMainExecutor()
+        fun create() = AsyncMainExecutor()
     }
 }

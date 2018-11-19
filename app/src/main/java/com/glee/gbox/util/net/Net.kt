@@ -1,9 +1,6 @@
 package com.glee.gbox.util.net
 
-import android.view.View
-import android.view.ViewGroup
 import com.glee.gbox.util.AsyncMainExecutor
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.internal.Util
@@ -28,7 +25,7 @@ val NET: Api by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl("http://www.wanandroid.com")
         .callbackExecutor(AsyncMainExecutor.create())
-        .addCallAdapterFactory(CoroutineCallAdapterFactory())
+//        .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .client(
             OkHttpClient.Builder()
                 .dispatcher(Dispatcher(IOEXECUTORSERVICE))
@@ -60,7 +57,6 @@ inline fun <T> Call<T>.enqueue(block: CallBackWrapper<T>.() -> Unit) {
         }
     })
 }
-
 
 class CallBackWrapper<T> {
     var onResponse: OnResponse<T>? = null

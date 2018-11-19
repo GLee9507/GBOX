@@ -42,13 +42,14 @@ data class RecyclerViewBinder<T>(
     @IdRes
     var variableId: Int = 0,
     var config: PagedList.Config? = null,
-    var loadInitial: LoadInitial<T>? = null,
-    var loadAfter: LoadAfter<T>? = null,
-    var areItemsTheSame: AreItemsTheSame<T>? = null,
-    var areContentsTheSame: AreContentsTheSame<T>? = null,
-    var getChangePayload: GetChangePayload<T>? = null
+//    private var loadInitial: LoadInitial<T>? = null,
+//    private var loadAfter: LoadAfter<T>? = null,
+    private var loadData: LoadData<T>? = null,
+    private var areItemsTheSame: AreItemsTheSame<T>? = null,
+    private var areContentsTheSame: AreContentsTheSame<T>? = null,
+    private var getChangePayload: GetChangePayload<T>? = null
 ) {
-    internal var initialLoadKey: Int = 0
+    var initialLoadKey: Int = 0
 
     val diffCallback = object : DiffUtil.ItemCallback<T>() {
         override fun areItemsTheSame(oldItem: T, newItem: T) =
@@ -69,14 +70,32 @@ data class RecyclerViewBinder<T>(
     fun initLiveData() {
         listData = LivePagedListBuilder<Int, T>(
             object : DataSource.Factory<Int, T>() {
-                override fun create() = SimplePageDataSource(loadInitial!!, loadAfter!!)
+                override fun create() = SimplePageDataSource(loadData!!)
             }, config!!
         ).setInitialLoadKey(initialLoadKey)
             .build()
 
     }
 
+    //    fun loadInitial(block: LoadInitial<T>) {
+//        loadInitial = block
+//    }
+//
+//    fun loadAfter(block: LoadAfter<T>) {
+//        loadAfter = block
+//    }
+    fun loadData(block: LoadData<T>) {
+        loadData = block
 
+    }
+
+    fun areItemsTheSame(block: AreItemsTheSame<T>) {
+        areItemsTheSame = block
+    }
+
+    fun areContentsTheSame(block: AreContentsTheSame<T>) {
+        areContentsTheSame = block
+    }
 }
 
 data class Config(
@@ -88,13 +107,13 @@ data class Config(
     var initialLoadKey: Int = 0
 )
 
-fun <T> recyclerViewBinder(block: RecyclerViewBinder<T>.() -> Unit): RecyclerViewBinder<T> =
+inline fun <T> recyclerViewBinder(block: RecyclerViewBinder<T>.() -> Unit): RecyclerViewBinder<T> =
     RecyclerViewBinder<T>().apply(block).apply {
         initLiveData()
     }
 
 
-fun <T> RecyclerViewBinder<T>.pagedConfig(block: Config.() -> Unit) {
+inline fun <T> RecyclerViewBinder<T>.pagedConfig(block: Config.() -> Unit) {
     val tmp = Config().apply(block)
     initialLoadKey = tmp.initialLoadKey
     config = PagedList.Config.Builder()

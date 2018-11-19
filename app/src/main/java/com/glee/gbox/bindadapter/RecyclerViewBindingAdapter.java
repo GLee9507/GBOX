@@ -1,15 +1,11 @@
 package com.glee.gbox.bindadapter;
 
-import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.glee.gbox.recyclerview.LiveRecyclerAdapter;
 import com.glee.gbox.recyclerview.RecyclerViewBinder;
-import com.glee.gbox.recyclerview.SimaplePagedAdapter;
-
-import java.util.List;
+import com.glee.gbox.recyclerview.SimplePagedAdapter;
 
 /**
  * @author liji
@@ -23,12 +19,12 @@ public class RecyclerViewBindingAdapter {
     public static void bind(RecyclerView recyclerView, RecyclerViewBinder binder, PagedList data) {
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         if (adapter == null) {
-            adapter = new SimaplePagedAdapter(binder);
+            adapter = new SimplePagedAdapter(binder);
             recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
             recyclerView.setAdapter(adapter);
         }
-        if (adapter instanceof SimaplePagedAdapter) {
-            ((SimaplePagedAdapter) adapter).submitList(data);
+        if (adapter instanceof SimplePagedAdapter) {
+            ((SimplePagedAdapter) adapter).submitList(data);
         }
     }
 }

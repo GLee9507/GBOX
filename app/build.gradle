@@ -58,8 +58,8 @@ dependencies {
     implementation dep.fresco
     implementation dep.fragment
     implementation dep.annotation
-    implementation dep.kotlin_coroutines_adapter
-    implementation dep.kotlin_coroutines
+//    implementation dep.kotlin_coroutines_adapter
+//    implementation dep.kotlin_coroutines
     kapt dep.databinding
 //    implementation dep.media2_exoplayer
 }
