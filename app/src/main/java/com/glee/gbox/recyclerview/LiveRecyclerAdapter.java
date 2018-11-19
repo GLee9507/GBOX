@@ -2,11 +2,14 @@ package com.glee.gbox.recyclerview;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.AsyncListDiffer;
@@ -22,23 +25,25 @@ import java.util.List;
  */
 
 
-public class LiveRecyclerAdapter<T> extends RecyclerView.Adapter<LiveHolder> {
+public class LiveRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final AsyncListDiffer<T> asyncListDiffer;
     @LayoutRes
     private final int layoutResId;
     private LayoutInflater layoutInflater;
     @IdRes
     private final int variableId;
-    private final RecyclerViewBinder<T> binder;
+    private final Listing<T> listing;
+    private ProgressBar progressBar;
+    private RecyclerView recyclerView;
 
     @SuppressLint("RestrictedApi")
-    public LiveRecyclerAdapter(RecyclerViewBinder<T> binder) {
-        this.binder = binder;
-        this.layoutResId = binder.getLayoutResId();
-        this.variableId = binder.getVariableId();
+    public LiveRecyclerAdapter(Listing<T> listing) {
+        this.listing = listing;
+        this.layoutResId = listing.getLayoutResId();
+        this.variableId = listing.getVariableId();
         asyncListDiffer = new AsyncListDiffer<>(
                 new AdapterListUpdateCallback(this),
-                new AsyncDifferConfig.Builder<>(binder.getDiffCallback())
+                new AsyncDifferConfig.Builder<>(listing.getDiff())
                         .setMainThreadExecutor(AsyncMainExecutor.Companion.create()).build()
         );
 
@@ -47,37 +52,63 @@ public class LiveRecyclerAdapter<T> extends RecyclerView.Adapter<LiveHolder> {
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         layoutInflater = LayoutInflater.from(recyclerView.getContext());
+        progressBar = new ProgressBar(recyclerView.getContext());
         super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
     }
 
     public void submitList(List<T> data) {
         asyncListDiffer.submitList(data);
+        listing.setPageNum(listing.getPageNum() + 1);
     }
 
     @NonNull
     @Override
-    public LiveHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new LiveHolder(DataBindingUtil.inflate(layoutInflater, layoutResId, viewGroup, false));
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        if (i == asyncListDiffer.getCurrentList().size()) {
+            return new LoadMoreHolder(progressBar);
+        } else {
+            return new LiveHolder(DataBindingUtil.inflate(layoutInflater, layoutResId, viewGroup, false));
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LiveHolder liveHolder, int i) {
-        if (i == asyncListDiffer.getCurrentList().size() - 2) {
-//            loadMore();
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
+        if (holder instanceof LiveRecyclerAdapter.LiveHolder) {
+            ViewDataBinding binding = ((LiveHolder) holder).binding;
+            binding.setVariable(variableId, asyncListDiffer.getCurrentList().get(i));
+            binding.executePendingBindings();
         }
-        liveHolder.binding.setVariable(variableId, asyncListDiffer.getCurrentList().get(i));
-        liveHolder.binding.executePendingBindings();
+        autoLoadMore(i);
     }
 
-    int page = 0;
+    private void autoLoadMore(int position) {
+        if (position < getItemCount()-2) {
+            return;
+        }
+        listing.getLoadData().invoke(listing.getPageNum());
+    }
 
-//    private void loadMore() {
-//        binder.getLoadMore().invoke(++page);
-//    }
 
     @Override
     public int getItemCount() {
-        return asyncListDiffer.getCurrentList().size();
+        return asyncListDiffer.getCurrentList().size() + 1;
+    }
+
+    private static class LiveHolder extends RecyclerView.ViewHolder {
+        final ViewDataBinding binding;
+
+        LiveHolder(@NonNull ViewDataBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+    }
+
+    private static class LoadMoreHolder extends RecyclerView.ViewHolder {
+
+        public LoadMoreHolder(@NonNull View itemView) {
+            super(itemView);
+        }
     }
 }
 

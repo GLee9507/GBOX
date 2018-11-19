@@ -15,6 +15,7 @@ class RecyclerViewStateLiveData : MutableLiveData<RecyclerViewStateLiveData.STAT
         LOAD_MORE,
         REFRESH,
         IDLE,
+        END,
         LOAD_MORE_FAILED,
         REFRESH_FAILED
     }

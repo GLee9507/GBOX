@@ -21,8 +21,8 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_width="match_parent"
                 android:id="@+id/recycler"
-                app:binder="@{viewModel.recyclerViewBinder}"
-                app:data="@{viewModel.recyclerViewBinder.listData}"
+                app:binder="@{viewModel.listing}"
+                app:data="@{viewModel.listing.listData}"
                 android:layout_height="match_parent"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
